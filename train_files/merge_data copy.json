@@ -1,0 +1,35 @@
+{	 
+    "image_under":[
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/cambrian(filtered)/uni_cambrian(filtered).json",  "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/cambrian(filtered)"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/chart2text(cauldron)/uni_chart2text(cauldron).json"	, "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/chart2text(cauldron)"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/chartqa(cauldron,llava_format)/uni_chartqa(cauldron,llava_format).json"	, "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/chartqa(cauldron,llava_format)"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/dvqa(cauldron,llava_format)/uni_dvqa(cauldron,llava_format).json"  ,  "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/dvqa(cauldron,llava_format)"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/sharegpt4o/uni_sharegpt4o.json"	, "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/sharegpt4o"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/scienceqa(cauldron,llava_format)/uni_scienceqa(cauldron,llava_format).json"	, "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/scienceqa(cauldron,llava_format)"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/image_textualization(filtered)/uni_image_textualization(filtered).json"	, "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/image_textualization(filtered)"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/robut_wtq(cauldron,llava_format)/uni_robut_wtq(cauldron,llava_format).json"	, "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/robut_wtq(cauldron,llava_format)"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/screen2words(cauldron)/uni_screen2words(cauldron).json"	, "/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-OneVision-Data/screen2words(cauldron)"],
+        ["/work/share1/yqs/uni_dataset/BAAI/DenseFusion-1M/DenseFusion-1M/uni_DenseFusion-1M.json", "/work/share1/yqs/uni_dataset/BAAI/DenseFusion-1M/images/"], 
+        ["/work/share1/yqs/uni_dataset/BAAI/DenseFusion-1M/DenseFusion-4V-100k/uni_DenseFusion-4V-100k.json", "/work/share1/yqs/uni_dataset/BAAI/DenseFusion-1M/images/"],
+        ["/work/share1/yqs/uni_dataset/DAMO-NLP-SG/VL3-Syn7M/new_output.json","/work/share1/yqs/uni_dataset/DAMO-NLP-SG/VL3-Syn7M/images"],
+        ["/work/share1/yqs/uni_dataset/Lin-Chen/ShareGPT4V/sharegpt4v_instruct_gpt4-vision_cap100k.json","/work/share1/yqs/uni_dataset/BAAI/DenseFusion-1M/images/"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-ReCap-558K/data/uni_LLaVA-ReCap-558K.json","/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-ReCap-558K/data/"],
+        ["/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-Instruct-150K/new/uni_llava_v1_5_mix665k.json","/work/share1/yqs/uni_dataset/lmms-lab/LLaVA-Instruct-150K/new"],
+        ["/work/share1/yqs/uni_dataset/neulab/MultiUI/stage1_data.json","/work/share1/yqs/uni_dataset/neulab/MultiUI/"],
+        ["/work/share1/yqs/uni_dataset/neulab/MultiUI/stage2_data_to_be_combined_with_general_data.json","/work/share1/yqs/uni_dataset/neulab/MultiUI/"],
+        ["/work/share1/yqs/uni_dataset/mm-vet-v2/uni_mm-vet-v2_final.json","/work/share1/yqs/uni_dataset/mm-vet-v2/"],
+        ["/work/share1/yqs/uni_dataset/naver-clova-ix/synthdog-en/uni_synthdog-en_final.json","/work/share1/yqs/uni_dataset/naver-clova-ix/synthdog-en/images/images"],
+        ["/work/share1/yqs/uni_dataset/Zhiqiang007/MathV360K/uni_MathV360K_final.json","/work/share1/yqs/uni_dataset/Zhiqiang007/MathV360K/data_images/"],
+        ["/work/share1/yqs/uni_dataset/Lin-Chen/ShareGPT4V/sharegpt4v_mix665k_cap23k_coco-ap9k_lcs3k_sam9k_div2k.json","/work/share1/yqs/uni_dataset/Lin-Chen/ShareGPT4V/"]
+    ],
+
+    "image_gen":[
+        ["/work/share1/caption/laion-nolang","/work/share/data/imgdata/nolang"]
+    ],
+
+    "video_gen":[
+        ["/work/share1/video_final/xigua_final_2163747.json", "/work/share/dataset/xigua_video"]
+    ]
+
+
+}

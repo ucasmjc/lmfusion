@@ -1,0 +1,178 @@
+absl-py==2.1.0
+accelerate==1.0.1
+aiohappyeyeballs==2.4.3
+aiohttp==3.11.7
+aiosignal==1.3.1
+annotated-types==0.7.0
+anyio==4.6.2.post1
+apex @ file:///apex-0.1_ascend_20240523-cp310-cp310-linux_aarch64.whl
+argon2-cffi==23.1.0
+argon2-cffi-bindings==21.2.0
+arrow==1.3.0
+ascendebug @ file:///usr/local/Ascend/ascend-toolkit/8.0.RC3/toolkit/tools/ascendebug-0.1.0-py3-none-any.whl
+asttokens==2.4.1
+async-lru==2.0.4
+async-timeout==5.0.1
+attrdict==2.0.1
+attrs==24.2.0
+#auto_tune @ file:///root/selfgz847617568/compiler/lib64/auto_tune-0.1.0-py3-none-any.whl
+av==14.0.1
+babel==2.16.0
+beartype==0.19.0
+beautifulsoup4==4.12.3
+bleach==6.2.0
+bs4==0.0.2
+certifi==2024.8.30
+cffi==1.17.1
+charset-normalizer==3.4.0
+comm==0.2.2
+#dataflow @ file:///root/selfgz847617568/compiler/lib64/dataflow-0.0.1-py3-none-any.whl
+datasets==3.1.0
+debugpy==1.8.9
+decorator==5.1.1
+decord==0.6.0
+deepspeed==0.16.3
+defusedxml==0.7.1
+diffusers==0.30.3
+dill==0.3.8
+einops==0.8.0
+exceptiongroup==1.2.2
+executing==2.1.0
+fastjsonschema==2.20.0
+filelock==3.16.1
+fqdn==1.5.1
+frozenlist==1.5.0
+fsspec==2024.9.0
+ftfy==6.3.1
+grpcio==1.68.0
+h11==0.14.0
+#hccl @ file:///root/selfgz2361020014/hccl/lib64/hccl-0.1.0-py3-none-any.whl
+hccl_parser @ file:///usr/local/Ascend/ascend-toolkit/8.0.RC3/toolkit/tools/hccl_parser-0.1-py3-none-any.whl
+hjson==3.1.0
+httpcore==1.0.7
+httpx==0.27.2
+huggingface-hub==0.26.2
+idna==3.10
+importlib_metadata==8.5.0
+iniconfig==2.0.0
+ipykernel==6.29.5
+ipython==8.29.0
+isoduration==20.11.0
+#-e git+https://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@github.com/PKU-YuanGroup/UniLLM.git@6708631e9e1788a60abe61b87f87c490e4449f87#egg=janus
+jedi==0.19.2
+Jinja2==3.1.4
+json5==0.9.28
+jsonpointer==3.0.0
+jsonschema==4.23.0
+jsonschema-specifications==2024.10.1
+jupyter-events==0.10.0
+jupyter-lsp==2.2.5
+jupyter_client==8.6.3
+jupyter_core==5.7.2
+jupyter_server==2.14.2
+jupyter_server_terminals==0.5.3
+jupyterlab==4.3.1
+jupyterlab_pygments==0.3.0
+jupyterlab_server==2.27.3
+#llm_datadist @ file:///root/selfgz847617568/compiler/lib64/llm_datadist-0.0.1-py3-none-any.whl
+Markdown==3.7
+MarkupSafe==3.0.2
+matplotlib-inline==0.1.7
+-e git+https://gitee.com/ascend/MindSpeed.git@5dc1e83b8e9e19ba895ca7d3c3a76db84308dfd9#egg=mindspeed
+
+mistune==3.0.2
+mpmath==1.3.0
+msgpack==1.1.0
+msobjdump @ file:///usr/local/Ascend/ascend-toolkit/8.0.RC3/toolkit/tools/msobjdump-0.1.0-py3-none-any.whl
+multidict==6.1.0
+multiprocess==0.70.16
+nbclient==0.10.0
+nbconvert==7.16.4
+nbformat==5.10.4
+nest-asyncio==1.6.0
+networkx==3.4.2
+ninja==1.11.1.2
+notebook_shim==0.2.4
+numpy==1.23.5
+#op_compile_tool @ file:///root/selfgz847617568/compiler/lib64/op_compile_tool-0.1.0-py3-none-any.whl
+op_gen @ file:///usr/local/Ascend/ascend-toolkit/8.0.RC3/toolkit/tools/op_gen-0.1-py3-none-any.whl
+op_test_frame @ file:///usr/local/Ascend/ascend-toolkit/8.0.RC3/toolkit/tools/op_test_frame-0.1-py3-none-any.whl
+#opc_tool @ file:///root/selfgz847617568/compiler/lib64/opc_tool-0.1.0-py3-none-any.whl
+overrides==7.7.0
+packaging==24.2
+pandarallel==1.6.5
+pandas==2.0.3
+pandocfilters==1.5.1
+parso==0.8.4
+peft==0.7.1
+pexpect==4.9.0
+pillow==11.0.0
+platformdirs==4.3.6
+pluggy==1.5.0
+prometheus_client==0.21.0
+prompt_toolkit==3.0.48
+propcache==0.2.0
+protobuf==5.28.3
+psutil==6.1.0
+ptyprocess==0.7.0
+pure_eval==0.2.3
+py-cpuinfo==9.0.0
+pyarrow==18.0.0
+pybind11==2.13.6
+pycparser==2.22
+pydantic==2.10.6
+pydantic_core==2.27.2
+Pygments==2.18.0
+pytest==8.3.3
+python-dateutil==2.9.0.post0
+python-json-logger==2.0.7
+pytz==2024.2
+PyYAML==6.0.2
+pyzmq==26.2.0
+referencing==0.35.1
+regex==2024.11.6
+requests==2.32.3
+rfc3339-validator==0.1.4
+rfc3986-validator==0.1.1
+rpds-py==0.21.0
+safetensors==0.4.5
+#schedule_search @ file:///root/selfgz847617568/compiler/lib64/schedule_search-0.1.0-py3-none-any.whl
+scipy==1.14.1
+Send2Trash==1.8.3
+sentencepiece==0.2.0
+show_kernel_debug_data @ file:///usr/local/Ascend/ascend-toolkit/8.0.RC3/toolkit/tools/show_kernel_debug_data-0.1.0-py3-none-any.whl
+six==1.16.0
+sniffio==1.3.1
+soupsieve==2.6
+stack-data==0.6.3
+sympy==1.13.3
+#te @ file:///root/selfgz847617568/compiler/lib64/te-0.4.0-py3-none-any.whl
+tensorboard==2.18.0
+tensorboard-data-server==0.7.2
+terminado==0.18.1
+tiktoken==0.8.0
+timm==1.0.8
+tinycss2==1.4.0
+tokenizers==0.21.0
+tomli==2.1.0
+torch==2.1.0
+torch-npu @ file:///torch_npu-2.1.0.post8-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl
+torchvision==0.16.0
+tornado==6.4.2
+tqdm==4.67.1
+traitlets==5.14.3
+transformers==4.48.3
+transformers-stream-generator==0.0.5
+types-python-dateutil==2.9.0.20241003
+typing_extensions==4.12.2
+tzdata==2024.2
+uri-template==1.3.0
+urllib3==2.2.3
+wcwidth==0.2.13
+webcolors==24.11.1
+webencodings==0.5.1
+websocket-client==1.8.0
+Werkzeug==3.1.3
+xxhash==3.5.0
+yarl==1.18.0
+zipp==3.21.0

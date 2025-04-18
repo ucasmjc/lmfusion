@@ -1,0 +1,141 @@
+{
+    "graph_id": 0,
+    "op": [
+        {
+            "error_type": "infer_shape_error",
+            "input0": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    1,
+                    16,
+                    256,
+                    256
+                ]
+            },
+            "input1": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    128,
+                    3,
+                    3,
+                    3
+                ]
+            },
+            "input2": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    128
+                ]
+            },
+            "name": "Conv2D1",
+            "output0": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    1,
+                    128,
+                    256,
+                    256
+                ]
+            },
+            "reason": "InferShapeFailed!",
+            "type": "Conv2D"
+        }
+    ],
+    "session_id": 0
+}
+{
+    "graph_id": 0,
+    "op": [
+        {
+            "error_type": "infer_shape_error",
+            "input0": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    1,
+                    16,
+                    256,
+                    256
+                ]
+            },
+            "input1": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    128,
+                    3,
+                    3,
+                    3
+                ]
+            },
+            "input2": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    128
+                ]
+            },
+            "name": "Conv2D1",
+            "output0": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    1,
+                    128,
+                    256,
+                    256
+                ]
+            },
+            "reason": "InferShapeFailed!",
+            "type": "Conv2D"
+        },
+        {
+            "error_type": "infer_shape_error",
+            "input0": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    1,
+                    16,
+                    256,
+                    256
+                ]
+            },
+            "input1": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    128,
+                    3,
+                    3,
+                    3
+                ]
+            },
+            "input2": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    128
+                ]
+            },
+            "name": "Conv2D1",
+            "output0": {
+                "data_type": "DT_BFLOAT16",
+                "layout": "NCHW",
+                "shape": [
+                    1,
+                    128,
+                    256,
+                    256
+                ]
+            },
+            "reason": "InferShapeFailed!",
+            "type": "Conv2D"
+        }
+    ],
+    "session_id": 0
+}
