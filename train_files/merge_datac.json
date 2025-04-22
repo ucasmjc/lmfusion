@@ -24,12 +24,18 @@
     ],
 
     "image_gen":[
-        ["/work/share1/caption/laion-nolang","/work/share/data/imgdata/nolang"]
+        ["/work/share1/caption/laion-nolang/", "/work/share/data/imgdata/nolang"],
+        ["/work/share1/caption/coyo1/", "/work/share/data/imgdata/coyo1"],
+    ["/work/share1/caption/coyo2/", "/work/share/data/imgdata/coyo2"],
+   ["/work/share1/caption/recap1/", "/work/share/data/imgdata/recap1"],
+    ["/work/share1/caption/recap2/", "/work/share/data/imgdata/recap2"],
+ ["/work/share1/caption/laion-aes/", "/work/share/data/imgdata/aes"],
+["/work/share1/caption/laion-multi/", "/work/share/data/imgdata/multi"]
     ],
 
     "video_gen":[
-        ["/work/share1/video_final/xigua_final_2163747.json", "/work/share/dataset/xigua_video"]
+        ["/work/share/projects/mjc/lmfusion/train_files/dataset_files/text_chat.json"]
     ]
 
-
+    
 }

@@ -1,6 +1,6 @@
 # Copyright 2024-2025 The Alibaba Wan Team Authors. All rights reserved.
 import logging
-
+import time
 import torch
 import torch.cuda.amp as amp
 import torch.nn as nn
@@ -75,11 +75,13 @@ class Resample(nn.Module):
         # layers
         if mode == 'upsample2d':
             self.resample = nn.Sequential(
-                Upsample(scale_factor=(2., 2.), mode='nearest-exact'),
+                #Upsample(scale_factor=(2., 2.), mode='nearest-exact'),
+                Upsample(scale_factor=(2., 2.), mode='nearest'),
                 nn.Conv2d(dim, dim // 2, 3, padding=1))
         elif mode == 'upsample3d':
             self.resample = nn.Sequential(
-                Upsample(scale_factor=(2., 2.), mode='nearest-exact'),
+                #Upsample(scale_factor=(2., 2.), mode='nearest-exact'),
+                Upsample(scale_factor=(2., 2.), mode='nearest'),
                 nn.Conv2d(dim, dim // 2, 3, padding=1))
             self.time_conv = CausalConv3d(
                 dim, dim * 2, (3, 1, 1), padding=(1, 0, 0))
@@ -335,6 +337,8 @@ class Encoder3d(nn.Module):
         ## downsamples
         for layer in self.downsamples:
             if feat_cache is not None:
+                print ("x ",x.dtype)
+                print ("feat_cache ",feat_cache[0].dtype)
                 x = layer(x, feat_cache, feat_idx)
             else:
                 x = layer(x)
@@ -413,6 +417,7 @@ class Decoder3d(nn.Module):
                 mode = 'upsample3d' if temperal_upsample[i] else 'upsample2d'
                 upsamples.append(Resample(out_dim, mode=mode))
                 scale *= 2.0
+        print(f"decoder init CUDA 内存占用: {torch.cuda.memory_allocated() / (1024 ** 3):.2f} GB")
         self.upsamples = nn.Sequential(*upsamples)
 
         # output blocks
@@ -421,6 +426,14 @@ class Decoder3d(nn.Module):
             CausalConv3d(out_dim, 3, 3, padding=1))
 
     def forward(self, x, feat_cache=None, feat_idx=[0]):
+        time_records = {
+            'conv1': 0,
+            'middle': 0,
+            'upsamples': 0,
+            'head': 0
+        }
+        start_time = time.time()
+
         ## conv1
         if feat_cache is not None:
             idx = feat_idx[0]
@@ -438,21 +451,35 @@ class Decoder3d(nn.Module):
         else:
             x = self.conv1(x)
 
+        time_records['conv1'] = time.time() - start_time
+
+        print(f"decoder forward CUDA 内存占用: {torch.cuda.memory_allocated() / (1024 ** 3):.2f} GB")
+        print(f"conv1 处理时间: {time_records['conv1']:.4f} 秒")
+
         ## middle
+        start_time = time.time()
         for layer in self.middle:
             if isinstance(layer, ResidualBlock) and feat_cache is not None:
                 x = layer(x, feat_cache, feat_idx)
             else:
                 x = layer(x)
+        time_records['middle'] = time.time() - start_time
+        print(f"decoder middle CUDA 内存占用: {torch.cuda.memory_allocated() / (1024 ** 3):.2f} GB")
+        print(f"middle 处理时间: {time_records['middle']:.4f} 秒")
 
         ## upsamples
+        start_time = time.time()
         for layer in self.upsamples:
             if feat_cache is not None:
                 x = layer(x, feat_cache, feat_idx)
             else:
                 x = layer(x)
+        time_records['upsamples'] = time.time() - start_time
+        print(f"decoder upsample CUDA 内存占用: {torch.cuda.memory_allocated() / (1024 ** 3):.2f} GB")
+        print(f"upsamples 处理时间: {time_records['upsamples']:.4f} 秒")
 
         ## head
+        start_time = time.time()
         for layer in self.head:
             if isinstance(layer, CausalConv3d) and feat_cache is not None:
                 idx = feat_idx[0]
@@ -469,6 +496,14 @@ class Decoder3d(nn.Module):
                 feat_idx[0] += 1
             else:
                 x = layer(x)
+        time_records['head'] = time.time() - start_time
+        print(f"decoder head CUDA 内存占用: {torch.cuda.memory_allocated() / (1024 ** 3):.2f} GB")
+        print(f"head 处理时间: {time_records['head']:.4f} 秒")
+        # 打印总时间统计
+        print("\n各段处理时间统计:")
+        for section, duration in time_records.items():
+            print(f"{section}: {duration:.4f} 秒")
+        print(f"总处理时间: {sum(time_records.values()):.4f} 秒")
         return x
 
 
@@ -517,6 +552,7 @@ class WanVAE_(nn.Module):
         self.clear_cache()
         ## cache
         t = x.shape[2]
+        print ("encode x dtype",x.dtype)
         iter_ = 1 + (t - 1) // 4
         ## 对encode输入的x，按时间拆分为1、4、4、4....
         for i in range(iter_):
@@ -544,12 +580,14 @@ class WanVAE_(nn.Module):
     def decode(self, z, scale):
         self.clear_cache()
         # z: [b,c,t,h,w]
+        print ("decode z dtype",z.dtype)
         if isinstance(scale[0], torch.Tensor):
             z = z / scale[1].view(1, self.z_dim, 1, 1, 1) + scale[0].view(
                 1, self.z_dim, 1, 1, 1)
         else:
             z = z / scale[1] + scale[0]
         iter_ = z.shape[2]
+        print ("iter_",iter_)
         x = self.conv2(z)
         for i in range(iter_):
             self._conv_idx = [0]
@@ -650,14 +688,14 @@ class WanVAE:
         """
         with amp.autocast(dtype=self.dtype):
             return [
-                self.model.encode(u.unsqueeze(0), self.scale).float().squeeze(0)
-                for u in videos
-            ]
+                    self.model.encode(u.unsqueeze(0), self.scale).squeeze(0)
+                    for u in videos
+                ]
 
     def decode(self, zs):
         with amp.autocast(dtype=self.dtype):
             return [
-                self.model.decode(u.unsqueeze(0),
+                self.model.decode(u,
                                   self.scale).float().clamp_(-1, 1).squeeze(0)
                 for u in zs
             ]

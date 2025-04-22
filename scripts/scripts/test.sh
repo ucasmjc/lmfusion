@@ -1,7 +1,7 @@
 #!/bin/bash
 # Environment Variables
 ARG_WORLD_SIZE=${1:-1}
-ARG_NPROC_PER_NODE=${2:-8}
+ARG_NPROC_PER_NODE=${2:-1}
 # ARG_NPROC_PER_NODE=1
 ARG_MASTER_PORT=13600
 ARG_RANK=0
@@ -67,7 +67,7 @@ torchrun --nnodes $NNODES \
     --dataloader_num_workers 12 \
     --report_to wandb \
     --run_name $RUN_NAME \
-    --sample_rate  1,3,0 \
+    --sample_rate  0,3,0 \
     --batchsize_list  16,16,0 \
     --samples_per_epoch $[500000*384] \
     --dataset "image_under||image_gen||text_chat" \

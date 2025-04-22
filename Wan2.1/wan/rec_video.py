@@ -1,4 +1,4 @@
-
+import time
 import random
 import argparse
 from typing import Optional
@@ -18,6 +18,12 @@ from torchvision.transforms import Lambda, Compose
 import sys
 sys.path.append(".")
 
+
+import subprocess
+
+def check_npu_memory():
+    result = subprocess.run(['npu-smi', 'info'], capture_output=True, text=True)
+    print(result.stdout)
 
 #from opensora.models.causalvideovae import ae_wrapper
 
@@ -157,7 +163,8 @@ def custom_to_video(x: torch.Tensor, fps: float = 2.0, output_file: str = 'outpu
     x = x.detach().cpu()
     x = torch.clamp(x, -1, 1)
     x = (x + 1) / 2
-    x = x.permute(0, 2, 3, 1).float().numpy()
+    #x = x.permute(0, 2, 3, 1).float().numpy()
+    x = x.permute(1, 2, 3, 0).float().numpy()
     x = (255 * x).astype(np.uint8)
     array_to_video(x, fps=fps, output_file=output_file)
     return
@@ -282,7 +289,7 @@ def main(args: argparse.Namespace):
 #     main(args)
 
 
-video_path =  "/work/share/projects/mjc/lmfusion/76gqtDiswDQ_segment_190.mp4"
+video_path =  "/work/share/projects/mjc/lmfusion/76gqtDiswDQ_segment_190_5frames.mp4"
 reader = decord.VideoReader(video_path, ctx=decord.cpu(0),num_threads=70 )
 num_frames =  len(reader)
 print ("num_frames", num_frames)
@@ -315,7 +322,11 @@ with torch.no_grad():
     )
     print(wan_vae.dtype)
     encoder_start = time.time()
+    x_vae = x_vae.to(dtype = torch.float16,)
 
+    print ("vae shape",x_vae.shape)
+
+    print(f"CUDA 内存占用: {torch.cuda.memory_allocated() / (1024 ** 3):.2f} GB")
     latents = wan_vae.encode(x_vae)
 
     print ("len",len(latents))
@@ -325,16 +336,22 @@ with torch.no_grad():
     encoder_end = time.time()
     encoder_time = encoder_end - encoder_start
 
+    print(f"encode end CUDA 内存占用: {torch.cuda.memory_allocated() / (1024 ** 3):.2f} GB")
 
-    video_recon = wan_vae.decode(latents[0])  
+    video_recon = wan_vae.decode(latents)  
+    print(f"CUDA 内存占用: {torch.cuda.memory_allocated() / (1024 ** 3):.2f} GB")
     print("recon type", type(video_recon))
-    print ("recon shape",latents[0].shape)
+    print ("recon shape",video_recon[0].shape)
 
     decoder_end = time.time()
     decoder_time = decoder_end - encoder_end
 
+    print(f"CUDA 最大内存占用: {torch.cuda.max_memory_allocated() / (1024 ** 3):.2f} GB")
 
     print(f"Encoder 耗时: {encoder_time:.4f} 秒")
     print(f"Decoder 耗时: {decoder_time:.4f} 秒")
     print(f"总耗时: {encoder_time + decoder_time:.4f} 秒")
+
+    #custom_to_video(video_recon[0], fps= 30 , output_file= "/work/share/projects/mjc/lmfusion/76gqtDiswDQ_segment_190frames_10rec.mp4")
+
 

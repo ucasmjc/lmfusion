@@ -14,7 +14,7 @@ from transformers.modeling_outputs import (
     CausalLMOutputWithPast,
     QuestionAnsweringModelOutput,
     SequenceClassifierOutputWithPast,
-    TokenClassifierOutput,
+    TokenClassifierOutput
 )
 from transformers.modeling_rope_utils import ROPE_INIT_FUNCTIONS
 from transformers.modeling_utils import ALL_ATTENTION_FUNCTIONS, PreTrainedModel
@@ -215,19 +215,17 @@ class Qwen2Attention(nn.Module):
         )
         if task=="image_under":
 
-            print ("bs",bs)
-            print ("il",il)
-            print ("tl",tl)
-
-
+            # print ("bs",bs)
+            # print ("il",il)
+            # print ("tl",tl)
             attn_output = attn_output.reshape(bs,tl, -1).contiguous() #b*l*c
 
 
-            print(" attn_output", attn_output.shape)
+            # print(" attn_output", attn_output.shape)
             img_embeds=attn_output[img_mask].view(bs,il,-1)
             text_embeds=attn_output*(~img_mask.unsqueeze(-1))
-            print("text_embeds",text_embeds.shape)
-            print("img_embeds",img_embeds.shape)
+            # print("text_embeds",text_embeds.shape)
+            # print("img_embeds",img_embeds.shape)
         else:
             attn_output = attn_output.reshape(bs,tl+il, -1).contiguous()
             text_embeds,img_embeds=attn_output[:,:tl],attn_output[:,tl:]
@@ -938,7 +936,7 @@ class Qwen2ForCausalLM(Qwen2PreTrainedModel, GenerationMixin):
 
         # Initialize weights and apply final processing
         self.post_init()
-        self.noise_scheduler=FlowMatchEulerDiscreteScheduler(**{"num_train_timesteps": 1000,"shift": 3.0})
+        self.noise_scheduler=FlowMatchEulerDiscreteScheduler(**{"num_train_timesteps": 1000})
         self.sigmas = self.noise_scheduler.sigmas.to(dtype=torch.float16)
         self.schedule_timesteps = self.noise_scheduler.timesteps
         self.ar_loss=config.ar_loss
@@ -979,21 +977,27 @@ class Qwen2ForCausalLM(Qwen2PreTrainedModel, GenerationMixin):
         is_train=True,
         **kwargs: Unpack[KwargsForCausalLM],
     ) -> Union[Tuple, CausalLMOutputWithPast]:
+        
         output_attentions = output_attentions if output_attentions is not None else self.config.output_attentions
         output_hidden_states = (
             output_hidden_states if output_hidden_states is not None else self.config.output_hidden_states
         )
         return_dict = return_dict if return_dict is not None else self.config.use_return_dict
-        #kwargs["task"]="image_under"#加的
+        # import pdb
+        # pdb.set_trace()
+        # 分任务类型处理
         if kwargs["task"]=="image_under":
             timesteps=torch.zeros([input_ids.shape[0]])
             z=self.image_to_latent(pixel_values)
             img_embeds=self.diffusion_projector.encode(z)
         else:
-            if timesteps is None:
+            if timesteps is None:#训练时不传入timesteps，测试时传入，作为if条件
+                #pixel_values为B*3*H*W，经过resize和归一化；在image_to_latent中shift&scale，并encode
                 z=self.image_to_latent(pixel_values)
-                #b*(h*w)*16
+                #b*16*32*32
                 noise = torch.randn_like(z)
+                #flow matching构造输入，借鉴的osp的https://github.com/PKU-YuanGroup/Open-Sora-Plan/blob/a92a8cc0cf1eaf89a461bcabc2e0b9bd77e499b1/opensora/train/train_t2v_diffusers.py#L698-L711
+                #schedule初始化没传入超参数FlowMatchEulerDiscreteScheduler(**{"num_train_timesteps": 1000})
                 u = compute_density_for_timestep_sampling(
                         weighting_scheme="logit_normal",
                         batch_size=z.shape[0],
@@ -1003,13 +1007,16 @@ class Qwen2ForCausalLM(Qwen2PreTrainedModel, GenerationMixin):
                 indices = (u * self.noise_scheduler.config.num_train_timesteps).long()
                 timesteps = self.schedule_timesteps[indices]
                 sigmas = self.get_sigmas(timesteps, n_dim=z.ndim, dtype=z.dtype).to(device=z.device)
+                #x_t
                 noisy_latent = (1.0 - sigmas) * z + sigmas * noise
             else:
                 noise = torch.randn((1, 16, 32,32), device=self.model.device, dtype= torch.float32 )
                 noisy_latent= pixel_values  
+            #unet encoder下采样+proj到llm维度,b*c*16*16
             img_embeds=self.diffusion_projector.encode(noisy_latent)
         tmp_shape=img_embeds.shape
-        img_input=img_embeds.view(tmp_shape[0],tmp_shape[1],-1).permute(0, 2, 1)
+        img_input=img_embeds.view(tmp_shape[0],tmp_shape[1],-1).permute(0, 2, 1) #->b*256*c
+        #输入llm，内部可以不用细看
         outputs = self.model(
             input_ids=input_ids,
             img_embeds=img_input,
@@ -1027,33 +1034,32 @@ class Qwen2ForCausalLM(Qwen2PreTrainedModel, GenerationMixin):
         )
         
         text_output=outputs["text_embeds"]
+        #B*256*c
         img_output=outputs["img_embeds"]
-        # Only compute necessary logits, and do not upcast them to float if we are not computing the loss
-        #slice_indices = slice(-logits_to_keep, None) if isinstance(logits_to_keep, int) else logits_to_keep
-        if text_output is not None:
-            t_logits = self.lm_head(text_output)
+        t_logits = self.lm_head(text_output)
         
         img_output=img_output.permute(0, 2, 1).view(tmp_shape)
+        #unet解码，上采样+proj到16维
         img_output=self.diffusion_projector.decode(img_output)
         img_res=img_output.view(tmp_shape[0],16,-1).permute(0, 2, 1)
         loss = None
         #import pdb 
         #pdb.set_trace()
+        #理解loss
         if self.ar_loss and kwargs["task"]=="image_under":
             ar_loss = self.loss_function(logits=t_logits, labels=labels, vocab_size=self.config.vocab_size, **kwargs)*0.2
         else:
             ar_loss=0
-        
+        #扩散loss
         if self.diffusion_loss and is_train and kwargs["task"]=="image_gen":
-            b, l,c= img_res.shape #b*l*c
-
+            b, l,c= img_res.shape
+            #实际上是1
             weighting = compute_loss_weighting_for_sd3(weighting_scheme="logit_normal", sigmas=sigmas)
 
-            # flow matching loss
+            # flow matching loss，SD3的方法，用反方向作为target
             target = noise - z
             target=target.view(tmp_shape[0],16,-1).permute(0, 2, 1)
 
-            # Compute regular loss.
             loss_mse = (weighting.float() * (img_res.float() - target.float()) ** 2).reshape(target.shape[0], -1)
             diffusion_loss = loss_mse.mean()
         else:
@@ -1063,12 +1069,13 @@ class Qwen2ForCausalLM(Qwen2PreTrainedModel, GenerationMixin):
             return {
                 "loss":loss,
                 "pred":img_output,
-                "latent":noise -img_output,
+                "latent":noise -img_output, #经过后处理可以得到训练时重建的结果
+               # "z":z,
                 "noise": noisy_latent,
                 "gt":pixel_values
                 #"past_key_values":outputs.past_key_values,
             }
-        if kwargs["task"]=="image_under":
+        elif kwargs["task"]=="image_under":
             return CausalLMOutputWithPast(
                 loss=loss,
                 logits=text_output,
@@ -1076,10 +1083,4 @@ class Qwen2ForCausalLM(Qwen2PreTrainedModel, GenerationMixin):
                 # hidden_states=outputs.hidden_states,
                 # attentions=outputs.attentions,
             )
-        else:
-            return {
-                "loss":loss,
-                "pred":img_output,
-                #"past_key_values":outputs.past_key_values,
-            }
 
